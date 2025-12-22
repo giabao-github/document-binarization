@@ -1,0 +1,5 @@
+# Minimal requirements for Docker environment
+numpy
+opencv-python-headless
+scikit-image
+pillow

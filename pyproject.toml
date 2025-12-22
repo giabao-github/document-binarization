@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "document-binarization"
+version = "0.1.0"
+description = "Document image binarization and text enhancement for OCR"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+  {name = "CV Team", email = "team@example.com"}
+]
+keywords = ["image-processing", "ocr", "binarization", "document-analysis"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "pytest-cov>=3.0.0",
+  "black>=22.0.0",
+  "flake8>=4.0.0",
+  "mypy>=0.950",
+]
+gpu = [
+  "cupy-cuda11x>=10.0.0",
+]
+api = [
+  "fastapi>=0.85.0",
+  "uvicorn[standard]>=0.18.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=binarization --cov-report=html --cov-report=term"

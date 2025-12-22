@@ -1,0 +1,6 @@
+# Preset for scanned documents
+methods:
+  default: otsu
+  postproc:
+    opening: true
+    min_area: 20

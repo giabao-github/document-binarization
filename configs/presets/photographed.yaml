@@ -1,0 +1,6 @@
+# Preset for photographed documents
+methods:
+  default: sauvola
+  adaptive:
+    window_size: 35
+    k: 0.34

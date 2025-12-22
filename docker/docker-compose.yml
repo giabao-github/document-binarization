@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  binarize:
+    build: .
+    volumes:
+      - .:/app
+    command: python scripts/binarize.py

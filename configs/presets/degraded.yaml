@@ -1,0 +1,7 @@
+# Preset for heavily degraded documents
+methods:
+  default: swt_binarize
+  postproc:
+    opening: true
+    closing: true
+    min_area: 5

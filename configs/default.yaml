@@ -1,0 +1,6 @@
+# Default configuration for binarization
+methods:
+  default: otsu
+  adaptive:
+    window_size: 25
+    k: 0.5
