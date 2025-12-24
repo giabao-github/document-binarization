@@ -1,7 +1,6 @@
 """
 Adaptive (local) thresholding methods for document binarization.
-These methods compute different threshold values for each pixel based on
-local neighborhood statistics, making them robust to non-uniform illumination.
+These methods compute different threshold values for each pixel based on local neighborhood statistics, making them robust to non-uniform illumination.
 """
 
 import time
