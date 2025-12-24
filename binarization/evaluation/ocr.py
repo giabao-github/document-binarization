@@ -14,7 +14,7 @@ try:
 	TESSERACT_AVAILABLE = True
 except ImportError:
 	TESSERACT_AVAILABLE = False
-	warnings.warn("pytesseract not available. OCR functionality will be limited.")
+	warnings.warn("pytesseract not available. OCR functionality will be limited.", stacklevel=2)
 
 
 @dataclass
@@ -39,7 +39,7 @@ class OCRResult:
 	def __post_init__(self):
 		"""Validate OCR result."""
 		if not 0 <= self.confidence <= 100:
-			warnings.warn(f"Confidence {self.confidence} outside [0, 100] range")
+			warnings.warn(f"Confidence {self.confidence} outside [0, 100] range", stacklevel=2)
 
 
 class TesseractOCR:
@@ -255,8 +255,7 @@ class OCRComparator:
 		Args:
 			predicted: Predicted text
 			ground_truth: Ground truth text
-
-	turns:
+		Returns:
 			Character error rate (0-1)
 		"""
 		distance = self._levenshtein_distance(predicted, ground_truth)

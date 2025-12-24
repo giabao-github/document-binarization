@@ -35,7 +35,7 @@ class ImageQualityMetrics:
 		"""
 		# Ensure same size
 		if image.shape != reference.shape:
-			warnings.warn("Image shapes don't match, resizing reference")
+			warnings.warn("Image shapes don't match, resizing reference", stacklevel=2)
 			reference = cv2.resize(reference, (image.shape[1], image.shape[0]))
 		
 		metrics = {
@@ -62,8 +62,8 @@ class ImageQualityMetrics:
 		"""
 		try:
 			return float(psnr(reference, image, data_range=255))
-		except Exception as e:
-			warnings.warn(f"PSNR computation failed: {e}")
+		except (ValueError, ZeroDivisionError) as e:
+			warnings.warn(f"PSNR computation failed: {e}", stacklevel=2)
 			return 0.0
 	
 	def compute_ssim(self, image: np.ndarray, reference: np.ndarray) -> float:
@@ -78,8 +78,8 @@ class ImageQualityMetrics:
 		"""
 		try:
 			return float(ssim(reference, image, data_range=255))
-		except Exception as e:
-			warnings.warn(f"SSIM computation failed: {e}")
+		except (ValueError, RuntimeError) as e:
+			warnings.warn(f"SSIM computation failed: {e}", stacklevel=2)
 			return 0.0
 	
 	def compute_mse(self, image: np.ndarray, reference: np.ndarray) -> float:
@@ -181,20 +181,18 @@ class BinarizationMetrics:
 	def evaluate(self, image: np.ndarray, reference: np.ndarray) -> Dict[str, float]:
 		"""
 		Evaluate binarization quality.
-
 		Args:
 			image: Result binary image
 			reference: Ground truth binary image
-	
 		Returns:
 			Dictionary with evaluation metrics
 		"""
-		# Ensure same size
-		if image.shape != reference.shape:
-			reference = cv2.resize(reference, (image.shape[1], image.shape[0]))
-		
 		# Basic image quality metrics
 		basic_metrics = self.image_metrics.compute_all(image, reference)
+
+		# Ensure same size for subsequent metrics (reference may have been resized above)
+		if image.shape != reference.shape:
+			reference = cv2.resize(reference, (image.shape[1], image.shape[0]))
 		
 		# Foreground/background specific metrics
 		fg_bg_metrics = self._compute_fg_bg_metrics(image, reference)
@@ -327,6 +325,8 @@ class CompositeMetric:
 			speed_weight: Weight for processing speed (0-1)
 		"""
 		total = ocr_weight + image_weight + speed_weight
+		if total == 0:
+			raise ValueError("At least one weight must be non-zero")
 		self.ocr_weight = ocr_weight / total
 		self.image_weight = image_weight / total
 		self.speed_weight = speed_weight / total

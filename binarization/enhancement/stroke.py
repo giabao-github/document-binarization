@@ -317,8 +317,10 @@ class CharacterSeparator(TextEnhancer):
 			Separated binary image
 		"""
 		# Find components
+		inverted = cv2.bitwise_not(binary_image)
 		num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
-			binary_image, connectivity=8
+			inverted, 
+			connectivity=8
 		)
 		
 		result = binary_image.copy()

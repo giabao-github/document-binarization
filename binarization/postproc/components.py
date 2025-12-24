@@ -128,7 +128,6 @@ class ComponentFilter(PostProcessor):
 		"""
 		if margin > 0:
 			# Create a mask excluding border region
-			h, w = binary_image.shape
 			mask = np.ones_like(binary_image)
 			mask[:margin, :] = 0
 			mask[-margin:, :] = 0
@@ -161,8 +160,9 @@ class ComponentAnalyzer:
 			Dictionary with component statistics
 		"""
 		# Find connected components
-		num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
-			binary_image, connectivity=8
+		num_labels, _labels, stats, centroids = cv2.connectedComponentsWithStats(
+			binary_image, 
+			connectivity=8
 		)
 		
 		if num_labels <= 1:

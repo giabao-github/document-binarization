@@ -61,15 +61,16 @@ class MorphologicalOperations(PostProcessor):
 		elif operation == 'erosion':
 			result = cv2.erode(binary_image, kernel, iterations=iterations)
 		elif operation == 'thinning':
-			# Convert to binary (0/1) for skimage
-			binary_01 = (binary_image > 127).astype(np.uint8)
-			result = morphology.thin(binary_01)
-			result = (result * 255).astype(np.uint8)
+			# Convert to binary (foreground=True) for skimage using project convention: foreground pixels == 0
+			binary_01 = (binary_image < 128).astype(np.uint8)
+			thinned = morphology.thin(binary_01)
+			# morphology.thin returns True for foreground; convert back to project convention (0 for foreground, 255 for background)
+			result = (thinned == 0).astype(np.uint8) * 255
 		elif operation == 'skeletonize':
-			# Morphological skeleton
-			binary_01 = (binary_image > 127).astype(np.uint8)
-			result = morphology.skeletonize(binary_01)
-			result = (result * 255).astype(np.uint8)
+			# Morphological skeleton using project convention (foreground==0)
+			binary_01 = (binary_image < 128).astype(np.uint8)
+			skel = morphology.skeletonize(binary_01)
+			result = (skel == 0).astype(np.uint8) * 255
 		elif operation == 'gradient':
 			# Morphological gradient (edge detection)
 			result = cv2.morphologyEx(binary_image, cv2.MORPH_GRADIENT, kernel)
@@ -275,7 +276,7 @@ class AdaptiveMorphology(PostProcessor):
 			Estimated noise ratio (0-1)
 		"""
 		# Small components are likely noise
-		num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
+		num_labels, _labels, stats, _ = cv2.connectedComponentsWithStats(
 			binary_image, connectivity=8
 		)
 		
