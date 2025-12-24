@@ -497,7 +497,7 @@ class BradleyThreshold(BinarizationAlgorithm):
 				x2 = min(w - 1, j + s2)
 				
 				# Compute area
-				count = (y2 - y1) * (x2 - x1)
+				count = (y2 - y1 + 1) * (x2 - x1 + 1)
 				
 				# Compute sum using integral image
 				# Note: integral image is (h+1)×(w+1)

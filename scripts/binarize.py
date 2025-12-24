@@ -149,7 +149,8 @@ def process_single_image(
 		
 		if verbose:
 			print(f"  ✓ Saved to: {output_path}")
-			print(f"  Threshold: {threshold:.1f}")
+			if threshold is not None:
+				print(f"  Threshold: {threshold:.1f}")
 			print(f"  Time: {processing_time:.4f}s")
 		
 		return {
@@ -232,8 +233,10 @@ def process_batch(
 	print(f"Average time: {total_time/len(image_paths):.4f}s per image")
 	
 	if successful > 0:
-		avg_threshold = np.mean([r['threshold'] for r in results if r.get('success')])
-		print(f"Average threshold: {avg_threshold:.1f}")
+		thresholds = [r['threshold'] for r in results if r.get('success') and r.get('threshold') is not None]
+		if thresholds:
+			avg_threshold = np.mean(thresholds)
+			print(f"Average threshold: {avg_threshold:.1f}")
 	
 	return results
 
@@ -308,7 +311,10 @@ def main():
 			
 			if result and result.get('success'):
 				if args.show_threshold:
-					print(f"\nComputed threshold: {result['threshold']:.1f}")
+					if result.get('threshold') is not None:
+						print(f"\nComputed threshold: {result['threshold']:.1f}")
+					else:
+						print("\nNo single threshold computed (method uses adaptive thresholding)")
 				return 0
 			else:
 				return 1

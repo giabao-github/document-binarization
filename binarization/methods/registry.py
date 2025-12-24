@@ -4,7 +4,7 @@ This module provides a centralized registry for all binarization algorithms,
 allowing easy discovery and instantiation by name.
 """
 
-from typing import Dict, List, Type, Optional
+from typing import Dict, List, Type, Optional, Any
 import logging
 
 from ..core.base import BinarizationAlgorithm
@@ -102,7 +102,7 @@ class AlgorithmRegistry:
 		all_names = set(self._algorithms.keys()) | set(self._algorithm_classes.keys())
 		return sorted(all_names)
 	
-	def get_info(self, name: str) -> Dict[str, any]:
+	def get_info(self, name: str) -> Dict[str, Any]:
 		"""
 		Get information about an algorithm.
 		Args:

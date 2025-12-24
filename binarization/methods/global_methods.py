@@ -10,7 +10,7 @@ import cv2
 from scipy import ndimage
 import warnings
 
-from ..core.base import BinarizationAlgorithm, BinarizationResult, ensure_binary
+from ..core.base import BinarizationAlgorithm, BinarizationResult
 
 
 class ManualThreshold(BinarizationAlgorithm):

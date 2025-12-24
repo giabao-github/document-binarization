@@ -97,7 +97,7 @@ class CLAHEThreshold(BinarizationAlgorithm):
 				'clahe_clip_limit': clip_limit,
 				'clahe_tile_size': tile_size,
 				'threshold_method': threshold_method,
-				'enhanced_contrast': float(np.std(enhanced) / np.std(image))
+				'enhanced_contrast': float(np.std(enhanced) / max(np.std(image), 1e-10))
 			}
 		)
 	
@@ -333,7 +333,11 @@ class GradientFusionThreshold(BinarizationAlgorithm):
 			raise ValueError(f"Unknown gradient method: {gradient_method}")
 		
 		# Normalize gradient
-		gradient_mag = (gradient_mag / gradient_mag.max() * 255).astype(np.uint8)
+		grad_max = gradient_mag.max()
+		if grad_max > 0:
+			gradient_mag = (gradient_mag / grad_max * 255).astype(np.uint8)
+		else:
+			gradient_mag = np.zeros_like(gradient_mag, dtype=np.uint8)
 		
 		# Threshold gradient
 		gradient_binary = np.where(gradient_mag > gradient_threshold, 255, 0).astype(np.uint8)

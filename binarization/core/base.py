@@ -163,7 +163,7 @@ class PostProcessor(ABC):
 	"""Abstract base class for post-processing operations."""
 	
 	def __init__(self, name: str):
-			self.name = name
+		self.name = name
 	
 	@abstractmethod
 	def process(self, binary_image: np.ndarray, **params) -> np.ndarray:
