@@ -1,7 +1,6 @@
 """
 Algorithm registry system for automatic discovery and registration.
-This module provides a centralized registry for all binarization algorithms,
-allowing easy discovery and instantiation by name.
+This module provides a centralized registry for all binarization algorithms, allowing easy discovery and instantiation by name.
 """
 
 from typing import Dict, List, Type, Optional, Any

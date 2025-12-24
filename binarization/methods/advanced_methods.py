@@ -1,7 +1,6 @@
 """
 Advanced and hybrid binarization methods.
-This module implements sophisticated binarization techniques that combine
-preprocessing, multiple features, or hybrid approaches for challenging documents.
+This module implements sophisticated binarization techniques that combine preprocessing, multiple features, or hybrid approaches for challenging documents.
 """
 
 import time

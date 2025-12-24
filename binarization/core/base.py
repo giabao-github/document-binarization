@@ -1,7 +1,6 @@
 """
 Core base classes and interfaces for binarization algorithms.
-This module defines the abstract base classes that all binarization
-methods must implement, ensuring consistent interfaces across the system.
+This module defines the abstract base classes that all binarization methods must implement, ensuring consistent interfaces across the system.
 """
 
 from abc import ABC, abstractmethod
