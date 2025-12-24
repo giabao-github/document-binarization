@@ -1,6 +1,5 @@
 """
 Core base classes and interfaces for binarization algorithms.
-
 This module defines the abstract base classes that all binarization
 methods must implement, ensuring consistent interfaces across the system.
 """
@@ -9,6 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, Tuple
 import numpy as np
+import cv2
 from enum import Enum
 
 
@@ -41,12 +41,12 @@ class BinarizationResult:
 	"""
 	Container for binarization results and metadata.
 	Attributes:
-			binary_image: Binary output image (0/255)
-			method: Name of the method used
-			parameters: Parameters used for binarization
-			threshold: Computed threshold value(s)
-			processing_time: Time taken in seconds
-			metadata: Additional algorithm-specific metadata
+		binary_image: Binary output image (0/255)
+		method: Name of the method used
+		parameters: Parameters used for binarization
+		threshold: Computed threshold value(s)
+		processing_time: Time taken in seconds
+		metadata: Additional algorithm-specific metadata
 	"""
 	binary_image: np.ndarray
 	method: str
@@ -54,7 +54,7 @@ class BinarizationResult:
 	threshold: Optional[float] = None
 	processing_time: float = 0.0
 	metadata: Dict[str, Any] = field(default_factory=dict)
-    
+	
 	def __post_init__(self):
 		"""Validate the binary image."""
 		if self.binary_image.dtype != np.uint8:
@@ -74,10 +74,10 @@ class BinarizationAlgorithm(ABC):
 	the binarize method. This ensures a consistent interface across all
 	algorithms in the system.
 	"""
-	
+  
 	def __init__(self, name: str, description: str = ""):
-		"""
-		Initialize the algorithm.
+		"""Initialize the algorithm.
+		
 		Args:
 			name: Unique name for the algorithm
 			description: Human-readable description
@@ -92,9 +92,9 @@ class BinarizationAlgorithm(ABC):
 		Apply binarization to the input image.
 		Args:
 			image: Input grayscale image (uint8 or float)
-			**params: Algorithm-specific parameters		
+			**params: Algorithm-specific parameters
 		Returns:
-			BinarizationResult containing binary image and metadata				
+			BinarizationResult containing binary image and metadata
 		Raises:
 			ValueError: If image format is invalid
 		"""
@@ -122,9 +122,9 @@ class BinarizationAlgorithm(ABC):
 		"""
 		Validate and preprocess input image.
 		Args:
-			image: Input image				
+			image: Input image
 		Returns:
-			Validated grayscale image as uint8				
+			Validated grayscale image as uint8
 		Raises:
 			ValueError: If image is invalid
 		"""
@@ -167,7 +167,7 @@ class PostProcessor(ABC):
 	
 	@abstractmethod
 	def process(self, binary_image: np.ndarray, **params) -> np.ndarray:
-		"""  
+		"""
 		Apply post-processing to binary image.
 		Args:
 			binary_image: Input binary image (0/255)
@@ -190,22 +190,18 @@ class TextEnhancer(ABC):
 		Apply text enhancement to binary image.
 		Args:
 			binary_image: Input binary image (0/255)
-			**params: Enhancement-specific parameters				
+			**params: Enhancement-specific parameters
 		Returns:
 			Enhanced binary image
 		"""
 		pass
 
 
-# Import cv2 after class definitions to avoid circular imports
-import cv2
-
-
 def ensure_binary(image: np.ndarray) -> np.ndarray:
 	"""
 	Ensure image is binary (0/255) uint8.
 	Args:
-		image: Input image		
+		image: Input image
 	Returns:
 		Binary image with values 0 and 255
 	"""
@@ -220,7 +216,7 @@ def normalize_to_uint8(image: np.ndarray) -> np.ndarray:
 	"""
 	Normalize any image to uint8 range [0, 255].
 	Args:
-		image: Input image of any type			
+		image: Input image of any type		
 	Returns:
 		Normalized uint8 image
 	"""
