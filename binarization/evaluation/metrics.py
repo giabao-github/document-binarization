@@ -3,7 +3,7 @@ Metrics for evaluating binarization quality.
 This module provides various metrics to assess binarization quality including OCR accuracy metrics and image quality metrics.
 """
 
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 import numpy as np
 import cv2
 from dataclasses import dataclass
@@ -383,6 +383,9 @@ class MetricsCalculator:
 		Returns:
 			Tuple of (per-image metrics list, aggregate statistics dict)
 		"""
+		if len(binary_images) != len(ground_truth_images):
+			raise ValueError("binary_images and ground_truth_images must have the same length")
+	
 		per_image_metrics = []
 		
 		for i in range(len(binary_images)):

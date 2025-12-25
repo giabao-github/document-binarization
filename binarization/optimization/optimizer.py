@@ -17,6 +17,17 @@ except ImportError:
 	OPTUNA_AVAILABLE = False
 	print("Warning: optuna not available. Bayesian optimization disabled.")
 
+try:
+	import pytesseract  
+	TESSERACT_AVAILABLE = True
+except Exception:
+	try:
+		from ..evaluation.ocr import TesseractOCR
+		TESSERACT_AVAILABLE = True
+	except Exception:
+		TESSERACT_AVAILABLE = False
+		print("Warning: Tesseract (pytesseract or TesseractOCR) not available. OCR objectives disabled.")
+
 
 @dataclass
 class OptimizationResult:
@@ -444,9 +455,16 @@ class BinarizationOptimizer:
 		self.ground_truth_images = ground_truth_images
 		self.objective = objective
 		self.ocr_lang = ocr_lang
+		self.ocr = None
 		
-		# Initialize OCR and metrics
-		if ground_truth_texts and TESSERACT_AVAILABLE:
+		if self.objective in ['cer', 'wer']:
+			if not TESSERACT_AVAILABLE:
+				raise RuntimeError(
+					"Objective '{0}' requires Tesseract OCR but it is not available. "
+					"Install pytesseract or provide a working TesseractOCR wrapper.".format(self.objective)
+				)
+			if not ground_truth_texts:
+				raise ValueError("Objective '{0}' requires `ground_truth_texts` to be provided.".format(self.objective))
 			from ..evaluation.ocr import TesseractOCR
 			self.ocr = TesseractOCR(lang=ocr_lang)
 		
@@ -471,6 +489,11 @@ class BinarizationOptimizer:
 			# Compute metric
 			if self.objective in ['cer', 'wer'] and self.ground_truth_texts:
 				# OCR-based metrics
+				if self.ocr is None:
+					raise RuntimeError(
+						"OCR requested but OCR engine is not initialized. "
+						"Ensure TESSERACT_AVAILABLE is True and `TesseractOCR` is importable."
+					)
 				ocr_result = self.ocr.extract_text(binary_image)
 				
 				if self.objective == 'cer':
@@ -511,6 +534,8 @@ class BinarizationOptimizer:
 				scores.append(score)
 		
 		# Return mean score
+		if not scores:
+			raise ValueError(f"No scores computed. Check objective '{self.objective}' and ground truth availability.")
 		return float(np.mean(scores))
 	
 	def optimize(
